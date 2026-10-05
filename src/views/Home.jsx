@@ -181,7 +181,7 @@ const Home = () => {
             <strong>12:00 - 20:00</strong>
           </p>
 
-          <p className="restaurant-location">Helsinki, Finland</p>
+          <p className="restaurant-location">Vantaa, Finland</p>
         </div>
       </section>
 
