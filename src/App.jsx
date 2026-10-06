@@ -1,6 +1,18 @@
 import {BrowserRouter, Routes, Route} from 'react-router';
 
-import './App.css';
+import './styles/layout.css';
+import './styles/home.css';
+import './styles/popup-cart.css';
+import './styles/lunch.css';
+import './styles/menu.css';
+import './styles/reservation.css';
+import './styles/login.css';
+import './styles/orders.css';
+import './styles/my-reservations.css';
+import './styles/account.css';
+import './styles/admin.css';
+import './styles/contact.css';
+import './styles/extras.css';
 
 import Home from './views/Home';
 import Menu from './views/Menu';

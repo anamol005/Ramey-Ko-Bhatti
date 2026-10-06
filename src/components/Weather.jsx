@@ -10,9 +10,8 @@ const Weather = () => {
         const apiKey = 'fe2f3baefff2517245a6a72552efcc9c';
 
         const response = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?q=Helsinki&units=metric&appid=${apiKey}`
+          `https://api.openweathermap.org/data/2.5/weather?q= Vantaa&units=metric&appid=${apiKey}`
         );
-
         if (!response.ok) {
           setError('Weather unavailable');
           return;
@@ -37,7 +36,7 @@ const Weather = () => {
 
         <h2>Weather near the restaurant</h2>
 
-        <p className="weather-location">Helsinki</p>
+        <p className="weather-location"> Vantaa, Finland</p>
       </div>
 
       <div className="weather-temperature">

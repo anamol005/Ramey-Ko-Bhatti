@@ -1,36 +1,23 @@
 import {useEffect, useState} from 'react';
+import {useSearchParams} from 'react-router';
+
 import {fetchData} from '../utils/fetchData';
 
 const Menu = () => {
+  const [searchParams] = useSearchParams();
+
   const [foodMenu, setFoodMenu] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [cart, setCart] = useState(() => {
-    const savedCart = localStorage.getItem('cart');
+  const [search, setSearch] = useState(searchParams.get('search') || '');
 
-    if (savedCart) {
-      return JSON.parse(savedCart);
-    }
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get('category') || 'All'
+  );
 
-    return [];
-  });
-
-  const [showCart, setShowCart] = useState(false);
-  const [showOrder, setShowOrder] = useState(false);
-
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [pickupTime, setPickupTime] = useState('');
-
-  const [search, setSearch] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
   const [showFilter, setShowFilter] = useState('Everything');
 
-  const [orderMessage, setOrderMessage] = useState('');
-
-  // Food details popup
   const [selectedItem, setSelectedItem] = useState(null);
-  const [selectedSpice, setSelectedSpice] = useState('Medium');
   const [quantity, setQuantity] = useState(1);
 
   const savedUser = localStorage.getItem('user');
@@ -45,6 +32,7 @@ const Menu = () => {
     const getMenu = async () => {
       try {
         const data = await fetchData('http://127.0.0.1:3000/api/menu');
+
         setFoodMenu(data);
       } catch (error) {
         console.log(error);
@@ -53,52 +41,31 @@ const Menu = () => {
       setLoading(false);
     };
 
-    const openCart = () => {
-      setShowCart(true);
-    };
-
     getMenu();
-
-    window.addEventListener('openCart', openCart);
-
-    if (sessionStorage.getItem('openCart') === 'true') {
-      sessionStorage.removeItem('openCart');
-
-      setTimeout(() => {
-        setShowCart(true);
-      }, 0);
-    }
-
-    return () => {
-      window.removeEventListener('openCart', openCart);
-    };
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
+    const category = searchParams.get('category');
+    const searchValue = searchParams.get('search');
 
-    let cartItems = 0;
+    if (category) {
+      setSelectedCategory(category);
+    } else {
+      setSelectedCategory('All');
+    }
 
-    cart.forEach((item) => {
-      cartItems += item.quantity || 1;
-    });
-
-    window.dispatchEvent(
-      new CustomEvent('cartUpdated', {
-        detail: cartItems,
-      })
-    );
-  }, [cart]);
+    if (searchValue) {
+      setSearch(searchValue);
+    }
+  }, [searchParams]);
 
   const openDetails = (item) => {
     setSelectedItem(item);
-    setSelectedSpice('Medium');
     setQuantity(1);
   };
 
   const closeDetails = () => {
     setSelectedItem(null);
-    setSelectedSpice('Medium');
     setQuantity(1);
   };
 
@@ -107,86 +74,42 @@ const Menu = () => {
       return;
     }
 
-    const cartItem = {
-      ...selectedItem,
-      quantity: quantity,
-    };
+    const savedCart = localStorage.getItem('cart');
 
-    if (Number(selectedItem.spice_option) === 1) {
-      cartItem.selectedSpice = selectedSpice;
+    let currentCart = [];
+
+    if (savedCart) {
+      currentCart = JSON.parse(savedCart);
     }
 
-    setCart([...cart, cartItem]);
-
-    closeDetails();
-  };
-
-  const removeFromCart = (index) => {
-    const newCart = cart.filter((item, itemIndex) => {
-      return itemIndex !== index;
+    const existingItem = currentCart.find((item) => {
+      return item.menu_id === selectedItem.menu_id;
     });
 
-    setCart(newCart);
-  };
-
-  const totalPrice = cart.reduce((total, item) => {
-    return total + Number(item.price) * (item.quantity || 1);
-  }, 0);
-
-  const totalItems = cart.reduce((total, item) => {
-    return total + (item.quantity || 1);
-  }, 0);
-
-  const handleOrder = async (event) => {
-    event.preventDefault();
-
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      setOrderMessage('Please login before placing an order');
-
-      return;
-    }
-
-    try {
-      const response = await fetch('http://127.0.0.1:3000/api/orders', {
-        method: 'POST',
-
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-
-        body: JSON.stringify({
-          customerName: name,
-          phone: phone,
-          pickupTime: pickupTime,
-          items: cart,
-        }),
+    if (existingItem) {
+      existingItem.quantity = (existingItem.quantity || 1) + quantity;
+    } else {
+      currentCart.push({
+        ...selectedItem,
+        quantity: quantity,
       });
-
-      const data = await response.json();
-
-      setOrderMessage(data.message);
-
-      if (response.ok) {
-        setCart([]);
-        setShowOrder(false);
-        setShowCart(false);
-
-        setName('');
-        setPhone('');
-        setPickupTime('');
-
-        setTimeout(() => {
-          setOrderMessage('');
-        }, 3000);
-      }
-    } catch (error) {
-      console.log(error);
-
-      setOrderMessage('Error placing order');
     }
+
+    localStorage.setItem('cart', JSON.stringify(currentCart));
+
+    let cartCount = 0;
+
+    currentCart.forEach((item) => {
+      cartCount += item.quantity || 1;
+    });
+
+    window.dispatchEvent(
+      new CustomEvent('cartUpdated', {
+        detail: cartCount,
+      })
+    );
+
+    closeDetails();
   };
 
   const categories = [
@@ -219,17 +142,25 @@ const Menu = () => {
 
   if (showFilter === 'Vegetarian') {
     filteredMenu = filteredMenu.filter((item) => {
+      const itemType = (item.type || '').toLowerCase();
+      const itemDiet = (item.diet || '').toLowerCase();
+
       return (
-        item.type?.toLowerCase().includes('vegetarian') ||
-        item.diet?.toLowerCase().includes('vegetarian') ||
-        item.diet?.toLowerCase().includes('vegan')
+        itemType === 'vegetarian' ||
+        itemDiet.includes('vegetarian') ||
+        itemDiet.includes('vegan')
       );
     });
   }
 
   if (showFilter === 'Non-Vegetarian') {
     filteredMenu = filteredMenu.filter((item) => {
-      return item.type?.toLowerCase().includes('non-vegetarian');
+      const itemType = (item.type || '').toLowerCase();
+      const itemDiet = (item.diet || '').toLowerCase();
+
+      return (
+        itemType === 'non-vegetarian' || itemDiet.includes('non-vegetarian')
+      );
     });
   }
 
@@ -272,8 +203,6 @@ const Menu = () => {
         </p>
       )}
 
-      {orderMessage && <p className="menu-order-message">{orderMessage}</p>}
-
       <div className="menu-controls">
         <div className="menu-search-box">
           <label>Search the menu</label>
@@ -296,11 +225,8 @@ const Menu = () => {
             onChange={(event) => setShowFilter(event.target.value)}
           >
             <option>Everything</option>
-
             <option>Vegetarian</option>
-
             <option>Non-Vegetarian</option>
-
             <option>Drinks</option>
           </select>
 
@@ -363,23 +289,42 @@ const Menu = () => {
           <div className="menu-items-grid">
             {filteredMenu.map((item) => (
               <div className="menu-item-card" key={item.menu_id}>
-                <span className="menu-type-badge">{item.type}</span>
+                <img
+                  className="menu-card-image"
+                  src={item.image || '/images/bhatti-hero.png'}
+                  alt={item.name}
+                  onError={(event) => {
+                    event.currentTarget.src = '/images/bhatti-hero.png';
+                  }}
+                />
 
-                <h3>{item.name}</h3>
+                <div className="menu-card-content">
+                  <div className="menu-card-title-row">
+                    <h3>{item.name}</h3>
 
-                <p className="menu-item-description">{item.description}</p>
+                    <p className="menu-price">
+                      {Number(item.price).toFixed(2)} €
+                    </p>
+                  </div>
 
-                <div className="menu-item-bottom">
-                  <p className="menu-price">
-                    {Number(item.price).toFixed(2)} €
-                  </p>
+                  <p className="menu-item-description">{item.description}</p>
+
+                  <div className="menu-card-badges">
+                    {item.type && (
+                      <span className="menu-type-badge">{item.type}</span>
+                    )}
+
+                    {item.diet && item.diet !== item.type && (
+                      <span className="menu-diet-badge">{item.diet}</span>
+                    )}
+                  </div>
 
                   <button
                     type="button"
                     className="menu-details-button"
                     onClick={() => openDetails(item)}
                   >
-                    View details ↗
+                    View Details
                   </button>
                 </div>
               </div>
@@ -391,18 +336,21 @@ const Menu = () => {
       {!loading && filteredMenu.length === 0 && (
         <div className="empty-menu">
           <h3>No dishes found.</h3>
-
           <p>Try another search or filter.</p>
         </div>
       )}
 
       {selectedItem && (
-        <div className="details-background">
-          <div className="details-panel">
+        <div className="details-background" onClick={closeDetails}>
+          <div
+            className="details-panel"
+            onClick={(event) => event.stopPropagation()}
+          >
             <button
               type="button"
               className="close-details"
               onClick={closeDetails}
+              aria-label="Close details"
             >
               ✕
             </button>
@@ -410,129 +358,93 @@ const Menu = () => {
             <div className="details-image-side">
               <img
                 className="details-image"
-                src={
-                  selectedItem.image
-                    ? selectedItem.image
-                    : '/images/bhatti-hero.png'
-                }
+                src={selectedItem.image || '/images/bhatti-hero.png'}
                 alt={selectedItem.name}
+                onError={(event) => {
+                  event.currentTarget.src = '/images/bhatti-hero.png';
+                }}
               />
             </div>
 
             <div className="details-info">
               <span className="details-category">{selectedItem.category}</span>
 
-              <h2>{selectedItem.name}</h2>
+              <div className="details-title-row">
+                <h2>{selectedItem.name}</h2>
 
-              <p className="details-price">
-                {Number(selectedItem.price).toFixed(2)} €
-              </p>
+                <p className="details-price">
+                  {Number(selectedItem.price).toFixed(2)} €
+                </p>
+              </div>
 
-              <span className="menu-type-badge">{selectedItem.type}</span>
+              <div className="details-badges">
+                {selectedItem.type && (
+                  <span className="menu-type-badge">{selectedItem.type}</span>
+                )}
+
+                {selectedItem.diet &&
+                  selectedItem.diet !== selectedItem.type && (
+                    <span className="menu-diet-badge">{selectedItem.diet}</span>
+                  )}
+              </div>
 
               <div className="details-line"></div>
 
               <div className="details-section">
                 <h3>Description</h3>
-
                 <p>{selectedItem.description}</p>
               </div>
 
               <div className="details-section">
                 <h3>Ingredients</h3>
-
                 <p>{selectedItem.ingredients}</p>
               </div>
 
               <div className="details-section allergens-section">
                 <h3>Allergens</h3>
 
-                <p>{selectedItem.allergens}</p>
+                <p>{selectedItem.allergens || 'No allergens listed'}</p>
               </div>
 
               {user && user.role === 'customer' && (
                 <>
                   <div className="details-line"></div>
 
-                  {Number(selectedItem.spice_option) === 1 && (
-                    <div className="details-section">
-                      <h3>Spice level</h3>
+                  <div className="details-order-row">
+                    <div className="details-quantity-area">
+                      <p className="details-order-label">Quantity</p>
 
-                      <div className="spice-options">
+                      <div className="quantity-box">
                         <button
                           type="button"
-                          className={
-                            selectedSpice === 'Mild' ? 'active-spice' : ''
-                          }
-                          onClick={() => setSelectedSpice('Mild')}
+                          onClick={() => {
+                            if (quantity > 1) {
+                              setQuantity(quantity - 1);
+                            }
+                          }}
                         >
-                          Mild
+                          −
                         </button>
 
-                        <button
-                          type="button"
-                          className={
-                            selectedSpice === 'Medium' ? 'active-spice' : ''
-                          }
-                          onClick={() => setSelectedSpice('Medium')}
-                        >
-                          Medium
-                        </button>
+                        <span>{quantity}</span>
 
                         <button
                           type="button"
-                          className={
-                            selectedSpice === 'Hot' ? 'active-spice' : ''
-                          }
-                          onClick={() => setSelectedSpice('Hot')}
+                          onClick={() => setQuantity(quantity + 1)}
                         >
-                          Hot
+                          +
                         </button>
                       </div>
                     </div>
-                  )}
 
-                  <div className="details-section">
-                    <h3>Quantity</h3>
-
-                    <div className="quantity-box">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (quantity > 1) {
-                            setQuantity(quantity - 1);
-                          }
-                        }}
-                      >
-                        −
-                      </button>
-
-                      <span>{quantity}</span>
-
-                      <button
-                        type="button"
-                        onClick={() => setQuantity(quantity + 1)}
-                      >
-                        +
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      className="details-add-button"
+                      onClick={addToCart}
+                    >
+                      Add to Cart
+                    </button>
                   </div>
-
-                  <div className="details-total">
-                    <span>Total</span>
-
-                    <strong>
-                      {(Number(selectedItem.price) * quantity).toFixed(2)} €
-                    </strong>
-                  </div>
-
-                  <button
-                    type="button"
-                    className="details-add-button"
-                    onClick={addToCart}
-                  >
-                    Add to cart
-                  </button>
                 </>
               )}
 
@@ -542,129 +454,6 @@ const Menu = () => {
                 </p>
               )}
             </div>
-          </div>
-        </div>
-      )}
-
-      {showCart && (
-        <div className="cart-background">
-          <div className="cart-panel">
-            <div className="cart-header">
-              <h2>{showOrder ? 'Complete Your Order' : 'Your Cart'}</h2>
-
-              <button
-                type="button"
-                className="close-cart"
-                onClick={() => {
-                  setShowCart(false);
-                  setShowOrder(false);
-                }}
-              >
-                ✕
-              </button>
-            </div>
-
-            {!showOrder && (
-              <div>
-                {cart.length === 0 && (
-                  <p className="empty-cart">Your cart is empty.</p>
-                )}
-
-                {cart.map((item, index) => (
-                  <div className="cart-item" key={index}>
-                    <div>
-                      <h4>{item.name}</h4>
-
-                      <p>Quantity: {item.quantity || 1}</p>
-
-                      <p>Spice: {item.selectedSpice || 'Medium'}</p>
-
-                      <p>
-                        {(Number(item.price) * (item.quantity || 1)).toFixed(2)}{' '}
-                        €
-                      </p>
-                    </div>
-
-                    <button
-                      type="button"
-                      className="remove-button"
-                      onClick={() => removeFromCart(index)}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-
-                {cart.length > 0 && (
-                  <div className="cart-bottom">
-                    <p>{totalItems} items in your cart</p>
-
-                    <h3 className="cart-total">
-                      Total: {totalPrice.toFixed(2)} €
-                    </h3>
-
-                    <button
-                      type="button"
-                      className="order-button"
-                      onClick={() => setShowOrder(true)}
-                    >
-                      Continue to Order
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {showOrder && (
-              <div>
-                <form onSubmit={handleOrder}>
-                  <div>
-                    <label>Name:</label>
-
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(event) => setName(event.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label>Phone:</label>
-
-                    <input
-                      type="tel"
-                      value={phone}
-                      onChange={(event) => setPhone(event.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label>Pickup time:</label>
-
-                    <input
-                      type="time"
-                      value={pickupTime}
-                      onChange={(event) => setPickupTime(event.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <button className="order-button" type="submit">
-                    Confirm Order
-                  </button>
-                </form>
-
-                <button
-                  type="button"
-                  className="back-cart-button"
-                  onClick={() => setShowOrder(false)}
-                >
-                  Back to Cart
-                </button>
-              </div>
-            )}
           </div>
         </div>
       )}

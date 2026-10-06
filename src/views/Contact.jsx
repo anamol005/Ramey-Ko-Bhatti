@@ -22,86 +22,79 @@ const Contact = () => {
 
   return (
     <section className="contact-page">
-      <div className="contact-header">
-        <p className="contact-small-title">VISIT US</p>
-
-        <h1>
-          Come say
-          <br />
-          namaste.
-        </h1>
-
-        <p>
-          Have a question about our menu, reservations or restaurant? Get in
-          touch with us.
-        </p>
-      </div>
-
       <div className="contact-content">
-        <div className="contact-information">
-          <div className="contact-info-card">
-            <span>01</span>
+        <div className="contact-left">
+          <div className="contact-header">
+            <p className="contact-small-title">VISIT US</p>
 
-            <div>
-              <h3>Restaurant</h3>
+            <h1>
+              Come say
+              <br />
+              namaste.
+            </h1>
 
-              <p>Ramey Ko Bhatti</p>
-
-              <p>
-                Metropolia University of Applied Sciences
-                <br />
-                Myyrmäki Campus
-              </p>
-
-              <p>
-                Leiritie 1
-                <br />
-                01600 Vantaa, Finland
-              </p>
-            </div>
+            <p>
+              Have a question about our menu, reservations or restaurant? Get in
+              touch with us.
+            </p>
           </div>
 
-          <div className="contact-info-card">
-            <span>02</span>
+          <div className="contact-information">
+            <div className="contact-info-card">
+              <span>01</span>
 
-            <div>
-              <h3>Opening Hours</h3>
+              <div>
+                <h3>Restaurant</h3>
 
-              <p>
-                Monday - Friday
-                <strong>10:30 - 21:00</strong>
-              </p>
+                <p>Ramey Ko Bhatti</p>
 
-              <p>
-                Saturday
-                <strong>12:00 - 22:00</strong>
-              </p>
+                <p>
+                  Metropolia University of Applied Sciences
+                  <br />
+                  Myyrmäki Campus
+                </p>
 
-              <p>
-                Sunday
-                <strong>12:00 - 20:00</strong>
-              </p>
+                <p>
+                  Leiritie 1
+                  <br />
+                  01600 Vantaa, Finland
+                </p>
+              </div>
             </div>
-          </div>
 
-          <div className="contact-info-card">
-            <span>03</span>
+            <div className="contact-info-card">
+              <span>02</span>
 
-            <div>
-              <h3>Contact</h3>
+              <div>
+                <h3>Opening Hours</h3>
 
-              <p>Phone: +358 123456789</p>
+                <p className="contact-hours-row">
+                  <span>Monday - Friday</span>
+                  <strong>10:30 - 21:00</strong>
+                </p>
 
-              <p>Email: rameykobhatti@gmail.com</p>
+                <p className="contact-hours-row">
+                  <span>Saturday</span>
+                  <strong>12:00 - 22:00</strong>
+                </p>
+
+                <p className="contact-hours-row">
+                  <span>Sunday</span>
+                  <strong>12:00 - 20:00</strong>
+                </p>
+              </div>
             </div>
-          </div>
 
-          <div className="contact-map">
-            <iframe
-              title="Ramey Ko Bhatti location"
-              src="https://www.google.com/maps?q=Metropolia+University+of+Applied+Sciences+Myyrmaki+Campus+Leiritie+1+Vantaa&output=embed"
-              loading="lazy"
-            ></iframe>
+            <div className="contact-info-card">
+              <span>03</span>
+
+              <div>
+                <h3>Contact</h3>
+
+                <p>Phone: +358 123456789</p>
+                <p>Email: rameykobhatti@gmail.com</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -109,15 +102,17 @@ const Contact = () => {
           {successMessage && (
             <p className="contact-success">{successMessage}</p>
           )}
+
           <p className="contact-form-title">SEND US A MESSAGE</p>
 
           <h2>Get in touch.</h2>
 
           <form onSubmit={handleContact}>
             <div>
-              <label>Name</label>
+              <label htmlFor="contact-name">Name</label>
 
               <input
+                id="contact-name"
                 type="text"
                 placeholder="Your name"
                 value={name}
@@ -127,9 +122,10 @@ const Contact = () => {
             </div>
 
             <div>
-              <label>Email</label>
+              <label htmlFor="contact-email">Email</label>
 
               <input
+                id="contact-email"
                 type="email"
                 placeholder="you@example.com"
                 value={email}
@@ -139,9 +135,10 @@ const Contact = () => {
             </div>
 
             <div>
-              <label>Message</label>
+              <label htmlFor="contact-message">Message</label>
 
               <textarea
+                id="contact-message"
                 placeholder="Write your message..."
                 value={message}
                 onChange={(event) => setMessage(event.target.value)}
@@ -154,6 +151,14 @@ const Contact = () => {
             </button>
           </form>
         </div>
+      </div>
+
+      <div className="contact-map">
+        <iframe
+          title="Ramey Ko Bhatti location"
+          src="https://www.google.com/maps?q=Metropolia+University+of+Applied+Sciences+Myyrmaki+Campus+Leiritie+1+Vantaa&output=embed"
+          loading="lazy"
+        ></iframe>
       </div>
     </section>
   );

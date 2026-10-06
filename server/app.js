@@ -13,9 +13,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const hostname = '127.0.0.1';
-const port = 3000;
-
 // HOME
 
 app.get('/', (req, res) => {
@@ -206,7 +203,7 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
         `INSERT INTO rkb_order_items
           (order_id, menu_id, item_name, price, quantity)
           VALUES (?, ?, ?, ?, ?)`,
-        [orderId, item.menu_id, item.name, item.price, 1]
+        [orderId, item.menu_id, item.name, item.price, item.quantity || 1]
       );
     }
 
@@ -455,6 +452,10 @@ app.get('/api/my-reservations', authenticateToken, async (req, res) => {
 
 // START SERVER
 
-app.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+// START SERVER
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });

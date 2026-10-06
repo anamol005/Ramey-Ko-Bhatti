@@ -27,11 +27,6 @@ const Admin = () => {
   const [diet, setDiet] = useState('');
 
   const [orders, setOrders] = useState([]);
-  const [showOrders, setShowOrders] = useState(false);
-
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [orderItems, setOrderItems] = useState([]);
-
   const [statusValues, setStatusValues] = useState({});
 
   const [reservations, setReservations] = useState([]);
@@ -41,23 +36,83 @@ const Admin = () => {
 
   useEffect(() => {
     const getMenu = async () => {
-      const response = await fetch('http://127.0.0.1:3000/api/menu');
+      try {
+        const response = await fetch('http://127.0.0.1:3000/api/menu');
 
-      const data = await response.json();
+        const data = await response.json();
 
-      setMenu(data);
+        if (response.ok) {
+          setMenu(data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     const getLunch = async () => {
-      const response = await fetch('http://127.0.0.1:3000/api/lunch');
+      try {
+        const response = await fetch('http://127.0.0.1:3000/api/lunch');
 
-      const data = await response.json();
+        const data = await response.json();
 
-      setLunch(data);
+        if (response.ok) {
+          setLunch(data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const getOrders = async () => {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        return;
+      }
+
+      try {
+        const response = await fetch('http://127.0.0.1:3000/api/orders', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert(data.message);
+          return;
+        }
+
+        const ordersWithItems = [];
+
+        for (const order of data) {
+          const itemResponse = await fetch(
+            `http://127.0.0.1:3000/api/orders/${order.order_id}/items`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          const itemData = await itemResponse.json();
+
+          ordersWithItems.push({
+            ...order,
+            items: itemResponse.ok ? itemData : [],
+          });
+        }
+
+        setOrders(ordersWithItems);
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     getMenu();
     getLunch();
+    getOrders();
   }, []);
 
   const startEdit = (item) => {
@@ -162,52 +217,6 @@ const Admin = () => {
     }
   };
 
-  const getOrders = async () => {
-    if (showOrders) {
-      setShowOrders(false);
-      return;
-    }
-
-    const token = localStorage.getItem('token');
-
-    const response = await fetch('http://127.0.0.1:3000/api/orders', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      setOrders(data);
-      setShowOrders(true);
-    } else {
-      alert(data.message);
-    }
-  };
-
-  const getOrderItems = async (orderId) => {
-    const token = localStorage.getItem('token');
-
-    const response = await fetch(
-      `http://127.0.0.1:3000/api/orders/${orderId}/items`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    const data = await response.json();
-
-    if (response.ok) {
-      setOrderItems(data);
-      setSelectedOrder(orderId);
-    } else {
-      alert(data.message);
-    }
-  };
-
   const updateOrderStatus = async (orderId) => {
     const token = localStorage.getItem('token');
 
@@ -256,11 +265,6 @@ const Admin = () => {
         [orderId]: status,
       });
     }
-  };
-
-  const hideOrderDetails = () => {
-    setSelectedOrder(null);
-    setOrderItems([]);
   };
 
   const getReservations = async () => {
@@ -400,7 +404,7 @@ const Admin = () => {
 
           <strong>{orders.length}</strong>
 
-          <p>Loaded orders</p>
+          <p>Customer orders</p>
         </div>
 
         <div className="admin-overview-card">
@@ -643,19 +647,19 @@ const Admin = () => {
 
             <p>View customer orders and update their status.</p>
           </div>
-
-          <button className="admin-main-button" onClick={getOrders}>
-            {showOrders ? 'Hide Orders' : 'View Orders'}
-          </button>
         </div>
 
-        {showOrders && (
-          <div className="admin-orders-list">
-            {orders.length === 0 && (
-              <p className="admin-empty-text">No orders found.</p>
-            )}
+        <div className="admin-orders-list">
+          {orders.length === 0 && (
+            <p className="admin-empty-text">No orders found.</p>
+          )}
 
-            {orders.map((order) => (
+          {orders.map((order) => {
+            const orderTotal = order.items.reduce((total, item) => {
+              return total + Number(item.price) * (item.quantity || 1);
+            }, 0);
+
+            return (
               <div className="admin-order-card" key={order.order_id}>
                 <div className="admin-order-top">
                   <div>
@@ -730,63 +734,38 @@ const Admin = () => {
                   </button>
                 </div>
 
-                {selectedOrder !== order.order_id && (
-                  <button
-                    className="admin-details-button"
-                    onClick={() => getOrderItems(order.order_id)}
-                  >
-                    View Order Details
-                  </button>
-                )}
+                <div className="admin-order-details">
+                  <h4>Order Items</h4>
 
-                {selectedOrder === order.order_id && (
-                  <div className="admin-order-details">
-                    <h4>Order Items</h4>
+                  {order.items.length === 0 && (
+                    <p>No items found for this order.</p>
+                  )}
 
-                    {orderItems.map((item) => (
-                      <div
-                        className="admin-order-item"
-                        key={item.order_item_id}
-                      >
-                        <div>
-                          <strong>{item.item_name}</strong>
+                  {order.items.map((item) => (
+                    <div className="admin-order-item" key={item.order_item_id}>
+                      <div>
+                        <strong>{item.item_name}</strong>
 
-                          <span>Quantity: {item.quantity}</span>
-                        </div>
-
-                        <strong>
-                          €{(Number(item.price) * item.quantity).toFixed(2)}
-                        </strong>
+                        <span>Quantity: {item.quantity || 1}</span>
                       </div>
-                    ))}
-
-                    <div className="admin-order-total">
-                      <span>Total</span>
 
                       <strong>
                         €
-                        {orderItems
-                          .reduce(
-                            (total, item) =>
-                              total + Number(item.price) * item.quantity,
-                            0
-                          )
-                          .toFixed(2)}
+                        {(Number(item.price) * (item.quantity || 1)).toFixed(2)}
                       </strong>
                     </div>
+                  ))}
 
-                    <button
-                      className="admin-hide-button"
-                      onClick={hideOrderDetails}
-                    >
-                      Hide Details
-                    </button>
+                  <div className="admin-order-total">
+                    <span>Total</span>
+
+                    <strong>€{orderTotal.toFixed(2)}</strong>
                   </div>
-                )}
+                </div>
               </div>
-            ))}
-          </div>
-        )}
+            );
+          })}
+        </div>
       </div>
 
       <div className="admin-section">

@@ -1,0 +1,69 @@
+/* Home Special Card Images */
+
+.home-special-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 38%;
+  align-items: stretch;
+  gap: 25px;
+  overflow: hidden;
+}
+
+.home-special-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.home-special-content p {
+  flex: 1;
+}
+
+.home-special-image {
+  width: 100%;
+  min-height: 230px;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.home-special-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+@media (max-width: 1000px) {
+  .home-special-card {
+    grid-template-columns: 1fr;
+  }
+
+  .home-special-image {
+    min-height: 260px;
+  }
+}
+
+@media (max-width: 650px) {
+  .home-special-card {
+    padding: 25px;
+    gap: 20px;
+  }
+
+  .home-special-image {
+    min-height: 220px;
+  }
+}
+
+/* HEADER LOGO */
+.brand {
+  width: 140px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+}
+
+.brand img {
+  width: 140px !important;
+  height: 90px !important;
+  object-fit: contain;
+  transform: scale(1.15);
+}

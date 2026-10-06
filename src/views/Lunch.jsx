@@ -8,9 +8,14 @@ const Lunch = () => {
 
   useEffect(() => {
     const getLunch = async () => {
-      const data = await fetchData('http://127.0.0.1:3000/api/lunch');
+      try {
+        const data = await fetchData('http://127.0.0.1:3000/api/lunch');
 
-      setLunchMenu(data);
+        setLunchMenu(data);
+      } catch (error) {
+        console.log(error);
+      }
+
       setLoading(false);
     };
 
@@ -21,7 +26,13 @@ const Lunch = () => {
     weekday: 'long',
   });
 
-  const todayLunch = lunchMenu.find((item) => {
+  const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+  const sortedLunch = [...lunchMenu].sort((a, b) => {
+    return weekdays.indexOf(a.day) - weekdays.indexOf(b.day);
+  });
+
+  const todayLunch = sortedLunch.filter((item) => {
     return item.day === today;
   });
 
@@ -53,37 +64,43 @@ const Lunch = () => {
 
       {loading && <p className="lunch-loading">Loading lunch...</p>}
 
-      {!loading && todayLunch && (
+      {!loading && todayLunch.length > 0 && (
         <div className="today-lunch-card">
           <div className="today-lunch-left">
-            <p className="today-lunch-label">
-              TODAY • {todayLunch.day.toUpperCase()}
-            </p>
+            <p className="today-lunch-label">TODAY • {today.toUpperCase()}</p>
 
-            <h2>{todayLunch.name}</h2>
+            <h2>Today's Lunch</h2>
 
             <p className="today-lunch-text">
-              Today's Bhatti Special, freshly prepared with Nepali flavours.
+              Choose from today's freshly prepared lunch specials.
             </p>
 
-            <span className="lunch-diet">{todayLunch.diet}</span>
-          </div>
+            <div className="today-lunch-choices">
+              {todayLunch.map((item) => (
+                <div className="today-lunch-choice" key={item.lunch_id}>
+                  <div>
+                    <h3>{item.name}</h3>
 
-          <div className="today-lunch-price">
-            {Number(todayLunch.price).toFixed(2)}
-            <span>€</span>
+                    <span className="lunch-diet">{item.diet}</span>
+                  </div>
+
+                  <strong>{Number(item.price).toFixed(2)} €</strong>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
 
-      {!loading && !todayLunch && (
+      {!loading && todayLunch.length === 0 && (
         <div className="weekend-lunch-card">
           <p className="today-lunch-label">WEEKEND</p>
 
           <h2>Lunch returns on Monday.</h2>
 
           <p>
-            Check this week's menu below and find your next Bhatti favourite.
+            Lunch is available Monday to Friday. Check this week's menu below
+            and find your next Bhatti favourite.
           </p>
         </div>
       )}
@@ -107,34 +124,42 @@ const Lunch = () => {
             <strong>Price</strong>
           </div>
 
-          {lunchMenu.map((item) => (
-            <div
-              className={
-                item.day === today
-                  ? 'weekly-lunch-row today-row'
-                  : 'weekly-lunch-row'
-              }
-              key={item.lunch_id}
-            >
-              <div className="lunch-day">
-                <strong>{item.day}</strong>
+          {sortedLunch.map((item, index) => {
+            const previousItem = sortedLunch[index - 1];
 
-                {item.day === today && (
-                  <span className="today-badge">TODAY</span>
-                )}
+            const firstItemOfDay = index === 0 || previousItem.day !== item.day;
+
+            const isToday = item.day === today;
+
+            return (
+              <div
+                className={
+                  isToday ? 'weekly-lunch-row today-row' : 'weekly-lunch-row'
+                }
+                key={item.lunch_id}
+              >
+                <div className="lunch-day">
+                  {firstItemOfDay && (
+                    <>
+                      <strong>{item.day}</strong>
+
+                      {isToday && <span className="today-badge">TODAY</span>}
+                    </>
+                  )}
+                </div>
+
+                <span className="lunch-name">{item.name}</span>
+
+                <div>
+                  <span className="lunch-diet">{item.diet}</span>
+                </div>
+
+                <strong className="lunch-price">
+                  {Number(item.price).toFixed(2)} €
+                </strong>
               </div>
-
-              <span className="lunch-name">{item.name}</span>
-
-              <div>
-                <span className="lunch-diet">{item.diet}</span>
-              </div>
-
-              <strong className="lunch-price">
-                {Number(item.price).toFixed(2)} €
-              </strong>
-            </div>
-          ))}
+            );
+          })}
 
           <p className="lunch-note">Lunch menu available Monday to Friday.</p>
         </div>

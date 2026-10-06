@@ -1,8 +1,19 @@
 import {useEffect, useState} from 'react';
-import {Link, Outlet} from 'react-router';
+import {Link, Outlet, useLocation} from 'react-router';
 
 const Layout = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'auto',
+    });
+  }, [location.pathname]);
+
   const [showSideMenu, setShowSideMenu] = useState(false);
+
   const [showCart, setShowCart] = useState(false);
   const [showOrder, setShowOrder] = useState(false);
 
@@ -111,6 +122,7 @@ const Layout = () => {
 
     if (!token) {
       setOrderMessage('Please login before placing an order');
+
       return;
     }
 
@@ -150,6 +162,7 @@ const Layout = () => {
         setName('');
         setPhone('');
         setPickupTime('');
+
         setShowOrder(false);
         setShowCart(false);
       }
@@ -206,6 +219,7 @@ const Layout = () => {
             <Link to="/login" className="header-icon-button" aria-label="Login">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="8" r="4" />
+
                 <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" />
               </svg>
             </Link>
@@ -219,6 +233,7 @@ const Layout = () => {
             >
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="8" r="4" />
+
                 <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" />
               </svg>
             </Link>
@@ -368,15 +383,11 @@ const Layout = () => {
                 )}
 
                 {cart.map((item, index) => (
-                  <div className="cart-item" key={index}>
+                  <div className="cart-item" key={item.menu_id || index}>
                     <div>
                       <h4>{item.name}</h4>
 
                       <p>Quantity: {item.quantity || 1}</p>
-
-                      {Number(item.spice_option) === 1 && (
-                        <p>Spice: {item.selectedSpice}</p>
-                      )}
 
                       <p>
                         {(Number(item.price) * (item.quantity || 1)).toFixed(2)}{' '}
@@ -396,7 +407,10 @@ const Layout = () => {
 
                 {cart.length > 0 && (
                   <div className="cart-bottom">
-                    <p>{totalItems} items in your cart</p>
+                    <p>
+                      {totalItems} {totalItems === 1 ? 'item' : 'items'} in your
+                      cart
+                    </p>
 
                     <h3 className="cart-total">
                       Total: {totalPrice.toFixed(2)} €
@@ -424,7 +438,9 @@ const Layout = () => {
                 )}
 
                 <div className="order-summary">
-                  <p>{totalItems} items</p>
+                  <p>
+                    {totalItems} {totalItems === 1 ? 'item' : 'items'}
+                  </p>
 
                   <strong>Total: {totalPrice.toFixed(2)} €</strong>
                 </div>
@@ -492,20 +508,25 @@ const Layout = () => {
         <div className="footer-main">
           <div className="footer-brand">
             <strong>Ramey Ko Bhatti</strong>
+
             <p>Nepali food made with heart.</p>
           </div>
 
           <div className="footer-links">
             <Link to="/menu">Our Menu</Link>
+
             <Link to="/lunch">Lunch</Link>
+
             <Link to="/contact">Contact</Link>
+
             <Link to="/reservation">Book a Table</Link>
           </div>
         </div>
 
         <div className="footer-bottom">
           <p>© 2026 Ramey Ko Bhatti</p>
-          <p>Vantaa, Finland</p>
+
+          <p> Vantaa, Finland</p>
         </div>
       </footer>
     </div>
