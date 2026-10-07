@@ -10,11 +10,14 @@ const MyOrders = () => {
       const token = localStorage.getItem('token');
 
       try {
-        const response = await fetch('http://127.0.0.1:3000/api/my-orders', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          'https://ramey-ko-bhatti.onrender.com/api/my-orders',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         const data = await response.json();
 
@@ -36,7 +39,7 @@ const MyOrders = () => {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:3000/api/orders/${orderId}/items`,
+        `https://ramey-ko-bhatti.onrender.com/api/orders/${orderId}/items`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

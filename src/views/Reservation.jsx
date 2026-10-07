@@ -20,21 +20,24 @@ const Reservation = () => {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:3000/api/reservations', {
-        method: 'POST',
+      const response = await fetch(
+        'https://ramey-ko-bhatti.onrender.com/api/reservations',
+        {
+          method: 'POST',
 
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
 
-        body: JSON.stringify({
-          customerName: name,
-          people: people,
-          reservationDate: date,
-          reservationTime: time,
-        }),
-      });
+          body: JSON.stringify({
+            customerName: name,
+            people: people,
+            reservationDate: date,
+            reservationTime: time,
+          }),
+        }
+      );
 
       const data = await response.json();
 

@@ -21,15 +21,18 @@ const Login = () => {
     };
 
     try {
-      const response = await fetch('http://127.0.0.1:3000/api/login', {
-        method: 'POST',
+      const response = await fetch(
+        'https://ramey-ko-bhatti.onrender.com/api/login',
+        {
+          method: 'POST',
 
-        headers: {
-          'Content-Type': 'application/json',
-        },
+          headers: {
+            'Content-Type': 'application/json',
+          },
 
-        body: JSON.stringify(user),
-      });
+          body: JSON.stringify(user),
+        }
+      );
 
       const data = await response.json();
 
@@ -61,15 +64,18 @@ const Login = () => {
     };
 
     try {
-      const response = await fetch('http://127.0.0.1:3000/api/register', {
-        method: 'POST',
+      const response = await fetch(
+        'https://ramey-ko-bhatti.onrender.com/api/register',
+        {
+          method: 'POST',
 
-        headers: {
-          'Content-Type': 'application/json',
-        },
+          headers: {
+            'Content-Type': 'application/json',
+          },
 
-        body: JSON.stringify(user),
-      });
+          body: JSON.stringify(user),
+        }
+      );
 
       const data = await response.json();
 

@@ -9,7 +9,7 @@ const MyReservations = () => {
 
       try {
         const response = await fetch(
-          'http://127.0.0.1:3000/api/my-reservations',
+          'https://ramey-ko-bhatti.onrender.com/api/my-reservations',
           {
             headers: {
               Authorization: `Bearer ${token}`,

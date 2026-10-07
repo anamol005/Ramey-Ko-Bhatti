@@ -37,7 +37,9 @@ const Admin = () => {
   useEffect(() => {
     const getMenu = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:3000/api/menu');
+        const response = await fetch(
+          'https://ramey-ko-bhatti.onrender.com/api/menu'
+        );
 
         const data = await response.json();
 
@@ -51,7 +53,9 @@ const Admin = () => {
 
     const getLunch = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:3000/api/lunch');
+        const response = await fetch(
+          'https://ramey-ko-bhatti.onrender.com/api/lunch'
+        );
 
         const data = await response.json();
 
@@ -71,11 +75,14 @@ const Admin = () => {
       }
 
       try {
-        const response = await fetch('http://127.0.0.1:3000/api/orders', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          'https://ramey-ko-bhatti.onrender.com/api/orders',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         const data = await response.json();
 
@@ -88,7 +95,7 @@ const Admin = () => {
 
         for (const order of data) {
           const itemResponse = await fetch(
-            `http://127.0.0.1:3000/api/orders/${order.order_id}/items`,
+            `https://ramey-ko-bhatti.onrender.com/api/orders/${order.order_id}/items`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -125,20 +132,23 @@ const Admin = () => {
   const saveEdit = async () => {
     const token = localStorage.getItem('token');
 
-    const response = await fetch(`http://127.0.0.1:3000/api/menu/${editId}`, {
-      method: 'PUT',
+    const response = await fetch(
+      `https://ramey-ko-bhatti.onrender.com/api/menu/${editId}`,
+      {
+        method: 'PUT',
 
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
 
-      body: JSON.stringify({
-        name: name,
-        price: price,
-        diet: diet,
-      }),
-    });
+        body: JSON.stringify({
+          name: name,
+          price: price,
+          diet: diet,
+        }),
+      }
+    );
 
     const data = await response.json();
 
@@ -175,7 +185,7 @@ const Admin = () => {
     const token = localStorage.getItem('token');
 
     const response = await fetch(
-      `http://127.0.0.1:3000/api/lunch/${editLunchId}`,
+      `https://ramey-ko-bhatti.onrender.com/api/lunch/${editLunchId}`,
       {
         method: 'PUT',
 
@@ -227,7 +237,7 @@ const Admin = () => {
     }
 
     const response = await fetch(
-      `http://127.0.0.1:3000/api/orders/${orderId}/status`,
+      `https://ramey-ko-bhatti.onrender.com/api/orders/${orderId}/status`,
       {
         method: 'PUT',
 
@@ -275,11 +285,14 @@ const Admin = () => {
 
     const token = localStorage.getItem('token');
 
-    const response = await fetch('http://127.0.0.1:3000/api/reservations', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      'https://ramey-ko-bhatti.onrender.com/api/reservations',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     const data = await response.json();
 
@@ -301,7 +314,7 @@ const Admin = () => {
     }
 
     const response = await fetch(
-      `http://127.0.0.1:3000/api/reservations/${reservationId}/status`,
+      `https://ramey-ko-bhatti.onrender.com/api/reservations/${reservationId}/status`,
       {
         method: 'PUT',
 

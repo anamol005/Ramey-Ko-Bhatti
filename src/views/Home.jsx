@@ -13,9 +13,13 @@ const Home = () => {
   useEffect(() => {
     const getHomeData = async () => {
       try {
-        const lunchData = await fetchData('http://127.0.0.1:3000/api/lunch');
+        const lunchData = await fetchData(
+          'https://ramey-ko-bhatti.onrender.com/api/lunch'
+        );
 
-        const menuData = await fetchData('http://127.0.0.1:3000/api/menu');
+        const menuData = await fetchData(
+          'https://ramey-ko-bhatti.onrender.com/api/menu'
+        );
 
         const special =
           menuData.find(

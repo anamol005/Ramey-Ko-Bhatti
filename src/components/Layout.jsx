@@ -127,21 +127,24 @@ const Layout = () => {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:3000/api/orders', {
-        method: 'POST',
+      const response = await fetch(
+        'https://ramey-ko-bhatti.onrender.com/api/orders',
+        {
+          method: 'POST',
 
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
 
-        body: JSON.stringify({
-          customerName: name,
-          phone: phone,
-          pickupTime: pickupTime,
-          items: cart,
-        }),
-      });
+          body: JSON.stringify({
+            customerName: name,
+            phone: phone,
+            pickupTime: pickupTime,
+            items: cart,
+          }),
+        }
+      );
 
       const data = await response.json();
 

@@ -9,7 +9,9 @@ const Lunch = () => {
   useEffect(() => {
     const getLunch = async () => {
       try {
-        const data = await fetchData('http://127.0.0.1:3000/api/lunch');
+        const data = await fetchData(
+          'https://ramey-ko-bhatti.onrender.com/api/lunch'
+        );
 
         setLunchMenu(data);
       } catch (error) {

@@ -31,7 +31,9 @@ const Menu = () => {
   useEffect(() => {
     const getMenu = async () => {
       try {
-        const data = await fetchData('http://127.0.0.1:3000/api/menu');
+        const data = await fetchData(
+          'https://ramey-ko-bhatti.onrender.com/api/menu'
+        );
 
         setFoodMenu(data);
       } catch (error) {
