@@ -22,7 +22,7 @@ const Login = () => {
 
     try {
       const response = await fetch(
-        'https://ramey-ko-bhatti.onrender.com/api/login',
+        'https://ramey-ko-bhatti-backend.onrender.com/api/login',
         {
           method: 'POST',
 
@@ -65,7 +65,7 @@ const Login = () => {
 
     try {
       const response = await fetch(
-        'https://ramey-ko-bhatti.onrender.com/api/register',
+        'https://ramey-ko-bhatti-backend.onrender.com/api/register',
         {
           method: 'POST',
 

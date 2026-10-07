@@ -32,7 +32,7 @@ const Menu = () => {
     const getMenu = async () => {
       try {
         const data = await fetchData(
-          'https://ramey-ko-bhatti.onrender.com/api/menu'
+          'https://ramey-ko-bhatti-backend.onrender.com/api/menu'
         );
 
         setFoodMenu(data);

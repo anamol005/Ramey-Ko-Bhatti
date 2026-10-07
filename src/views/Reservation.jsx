@@ -21,7 +21,7 @@ const Reservation = () => {
 
     try {
       const response = await fetch(
-        'https://ramey-ko-bhatti.onrender.com/api/reservations',
+        'https://ramey-ko-bhatti-backend.onrender.com/api/reservations',
         {
           method: 'POST',
 

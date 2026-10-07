@@ -14,11 +14,11 @@ const Home = () => {
     const getHomeData = async () => {
       try {
         const lunchData = await fetchData(
-          'https://ramey-ko-bhatti.onrender.com/api/lunch'
+          'https://ramey-ko-bhatti-backend.onrender.com/api/lunch'
         );
 
         const menuData = await fetchData(
-          'https://ramey-ko-bhatti.onrender.com/api/menu'
+          'https://ramey-ko-bhatti-backend.onrender.com/api/menu'
         );
 
         const special =
@@ -153,7 +153,7 @@ const Home = () => {
           {bhattiSpecial && (
             <div className="home-special-image">
               <img
-                src={bhattiSpecial.image || '/images/chicken-sekuwa.jpg'}
+                src={bhattiSpecial.image || '/images/chicken-biryani.jpg'}
                 alt={bhattiSpecial.name}
               />
             </div>

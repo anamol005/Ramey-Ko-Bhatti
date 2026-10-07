@@ -10,7 +10,7 @@ const Lunch = () => {
     const getLunch = async () => {
       try {
         const data = await fetchData(
-          'https://ramey-ko-bhatti.onrender.com/api/lunch'
+          'https://ramey-ko-bhatti-backend.onrender.com/api/lunch'
         );
 
         setLunchMenu(data);

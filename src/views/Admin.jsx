@@ -38,7 +38,7 @@ const Admin = () => {
     const getMenu = async () => {
       try {
         const response = await fetch(
-          'https://ramey-ko-bhatti.onrender.com/api/menu'
+          'https://ramey-ko-bhatti-backend.onrender.com/api/menu'
         );
 
         const data = await response.json();
@@ -54,7 +54,7 @@ const Admin = () => {
     const getLunch = async () => {
       try {
         const response = await fetch(
-          'https://ramey-ko-bhatti.onrender.com/api/lunch'
+          'https://ramey-ko-bhatti-backend.onrender.com/api/lunch'
         );
 
         const data = await response.json();
@@ -76,7 +76,7 @@ const Admin = () => {
 
       try {
         const response = await fetch(
-          'https://ramey-ko-bhatti.onrender.com/api/orders',
+          'https://ramey-ko-bhatti-backend.onrender.com/api/orders',
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -95,7 +95,7 @@ const Admin = () => {
 
         for (const order of data) {
           const itemResponse = await fetch(
-            `https://ramey-ko-bhatti.onrender.com/api/orders/${order.order_id}/items`,
+            `https://ramey-ko-bhatti-backend.onrender.com/api/orders/${order.order_id}/items`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -133,7 +133,7 @@ const Admin = () => {
     const token = localStorage.getItem('token');
 
     const response = await fetch(
-      `https://ramey-ko-bhatti.onrender.com/api/menu/${editId}`,
+      `https://ramey-ko-bhatti-backend.onrender.com/api/menu/${editId}`,
       {
         method: 'PUT',
 
@@ -185,7 +185,7 @@ const Admin = () => {
     const token = localStorage.getItem('token');
 
     const response = await fetch(
-      `https://ramey-ko-bhatti.onrender.com/api/lunch/${editLunchId}`,
+      `https://ramey-ko-bhatti-backend.onrender.com/api/lunch/${editLunchId}`,
       {
         method: 'PUT',
 
@@ -237,7 +237,7 @@ const Admin = () => {
     }
 
     const response = await fetch(
-      `https://ramey-ko-bhatti.onrender.com/api/orders/${orderId}/status`,
+      `https://ramey-ko-bhatti/api/orders/${orderId}/status`,
       {
         method: 'PUT',
 
@@ -286,7 +286,7 @@ const Admin = () => {
     const token = localStorage.getItem('token');
 
     const response = await fetch(
-      'https://ramey-ko-bhatti.onrender.com/api/reservations',
+      'https://ramey-ko-bhatti-backend.onrender.com/api/reservations',
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -314,7 +314,7 @@ const Admin = () => {
     }
 
     const response = await fetch(
-      `https://ramey-ko-bhatti.onrender.com/api/reservations/${reservationId}/status`,
+      `https://ramey-ko-bhatti-backend.onrender.com/api/reservations/${reservationId}/status`,
       {
         method: 'PUT',
 

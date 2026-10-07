@@ -128,7 +128,7 @@ const Layout = () => {
 
     try {
       const response = await fetch(
-        'https://ramey-ko-bhatti.onrender.com/api/orders',
+        'https://ramey-ko-bhatti-backend.onrender.com/api/orders',
         {
           method: 'POST',
 

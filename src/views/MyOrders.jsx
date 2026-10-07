@@ -11,7 +11,7 @@ const MyOrders = () => {
 
       try {
         const response = await fetch(
-          'https://ramey-ko-bhatti.onrender.com/api/my-orders',
+          'https://ramey-ko-bhatti-backend.onrender.com/api/my-orders',
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -39,7 +39,7 @@ const MyOrders = () => {
 
     try {
       const response = await fetch(
-        `https://ramey-ko-bhatti.onrender.com/api/orders/${orderId}/items`,
+        `https://ramey-ko-bhatti-backend.onrender.com/api/orders/${orderId}/items`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
