@@ -49,3 +49,11 @@ node app.js
 ```
 
 Create a `server/.env` file with the required database and JWT environment variables.
+
+## Feedback Form
+
+We value your feedback! Please share your thoughts to help us improve.
+
+**[Submit Feedback](https://docs.google.com/forms/d/e/1FAIpQLSfTq4vowaQrpWM5fBqg1Y1H3I_xU_DBWRi3MVxXLWCbHcFexg/viewform)**
+
+<img src="ramey-ko-bhatti-feedback-qr.png" alt="Feedback QR Code" width="250">
