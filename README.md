@@ -1,28 +1,29 @@
-# Ramey Ko Bhatti 🍽️
+# Ramey Ko Bhatti
 
-A full-stack restaurant web application for **Ramey Ko Bhatti**, featuring online menu browsing, user authentication, food ordering, and restaurant reservations.
+A full-stack restaurant web application featuring food browsing, user authentication, online ordering, and table reservations.
 
-## 🚀 Features
+## Live Demo
+- **Website:** https://ramey-ko-bhatti-frontend.onrender.com/
+- **Backend:** https://ramey-ko-bhatti-backend.onrender.com/
 
-- 🍴 Restaurant menu
-- 🔐 User registration and login
-- 🛒 Shopping cart
-- 📦 Online food ordering
-- 📅 Table reservations
-- 👤 Customer and admin roles
-- 🌦️ Weather information
-- 💾 MySQL database
+## Features
+- Restaurant menu
+- User registration and login
+- Shopping cart
+- Online food ordering
+- Table reservations
+- Customer and admin roles
+- Weather information
+- MySQL database
 
-## 🛠️ Technologies
-
+## Technologies
 - **Frontend:** React, Vite, CSS
 - **Backend:** Node.js, Express
 - **Database:** MySQL
 - **Authentication:** JWT
-- **Deployment:** Netlify + Render + Aiven
+- **Deployment:** Render and Aiven
 
-## 📁 Project Structure
-
+## Project Structure
 ```text
 Ramey-Ko-Bhatti/
 ├── src/          # React frontend
@@ -32,17 +33,15 @@ Ramey-Ko-Bhatti/
 └── README.md
 ```
 
-## ⚙️ Running Locally
+## Running Locally
 
 ### Frontend
-
 ```bash
 npm install
 npm run dev
 ```
 
 ### Backend
-
 ```bash
 cd server
 npm install
@@ -50,10 +49,3 @@ node app.js
 ```
 
 Create a `server/.env` file with the required database and JWT environment variables.
-
-## 🌐 Deployment
-
-- **Frontend:** Netlify
-- **Backend:** Render
-- **Database:** Aiven MySQL
-
